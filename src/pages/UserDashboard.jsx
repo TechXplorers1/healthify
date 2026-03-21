@@ -1,21 +1,47 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CLINICS, PATIENT_STORIES } from '../data/mockData';
-import { MapPin, Phone, DollarSign, Star, Calendar, Search, Building2, Stethoscope, HeartPulse, ArrowRight, Quote } from 'lucide-react';
+import { MapPin, Phone, DollarSign, Star, Calendar, Search, Building2, Stethoscope, HeartPulse, ArrowRight, Quote, ChevronLeft, ChevronRight, Sun, Sunset, Moon } from 'lucide-react';
 
 const UserDashboard = () => {
     const navigate = useNavigate();
     const [selectedClinic, setSelectedClinic] = useState(null);
-    const [bookingDate, setBookingDate] = useState('');
+    const [selectedDate, setSelectedDate] = useState('09 Mar');
+    const [selectedSlot, setSelectedSlot] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
+
+    // Reset slot when clinic or date changes
+    React.useEffect(() => {
+        setSelectedSlot(null);
+    }, [selectedClinic, selectedDate]);
+
+    const DATES = [
+        { day: 'Mon', date: '09 Mar' },
+        { day: 'Tue', date: '10 Mar' },
+        { day: 'Wed', date: '11 Mar' },
+        { day: 'Thu', date: '12 Mar' },
+        { day: 'Fri', date: '13 Mar' },
+        { day: 'Sat', date: '14 Mar' }
+    ];
+
+    const SLOTS = {
+        morning: ['10:00 AM', '10:15 AM', '10:30 AM', '10:45 AM', '11:00 AM', '11:30 AM'],
+        afternoon: ['12:00 PM', '12:15 PM', '3:30 PM', '3:45 PM'],
+        evening: ['4:00 PM']
+    };
+
+    const disabledSlots = ['10:00 AM', '12:15 PM'];
 
     const handleBook = (e) => {
         e.preventDefault();
-        if (!bookingDate) return;
+        if (!selectedSlot) {
+            alert('Please select a time slot to book an appointment.');
+            return;
+        }
 
-        alert(`Appointment booked successfully for ${selectedClinic.name} on ${bookingDate}!`);
+        alert(`Appointment booked successfully for ${selectedClinic.name} on ${selectedDate} at ${selectedSlot}!`);
         setSelectedClinic(null);
-        setBookingDate('');
+        setSelectedSlot(null);
     };
 
     const filteredClinics = CLINICS.filter(clinic =>
@@ -58,7 +84,7 @@ const UserDashboard = () => {
                         <div style={{ background: 'rgba(16, 185, 129, 0.1)', width: '60px', height: '60px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem' }}>
                             <Calendar size={32} color="var(--secondary)" />
                         </div>
-                        <h3 style={{ fontSize: '1.3rem', marginBottom: '0.5rem', fontWeight: 700 }}>Book Appointment</h3>
+                        <h3 style={{ fontSize: '1.3rem', marginBottom: '0.5rem', fontWeight: 700 }}>Find Hospitals / Clinics</h3>
                         <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', flexGrow: 1 }}>Schedule a visit with your preferred clinic instantly without waiting in queues.</p>
                         <div style={{ display: 'flex', alignItems: 'center', color: 'var(--secondary)', fontWeight: 600, fontSize: '0.95rem' }}>
                             Book Now <ArrowRight size={16} style={{ marginLeft: '0.5rem' }} />
@@ -86,7 +112,7 @@ const UserDashboard = () => {
                             <Building2 size={24} color="white" strokeWidth={2} />
                         </div>
                         <div>
-                            <h2 className="animate-slide-up" style={{ fontSize: '2.25rem', marginBottom: '0.25rem', fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text)' }}>Partner Clinics</h2>
+                            <h2 className="animate-slide-up" style={{ fontSize: '2.25rem', marginBottom: '0.25rem', fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text)' }}>Nearby Hospitals / Clinics</h2>
                             <p className="animate-slide-up delay-100" style={{ color: 'var(--text-muted)', fontSize: '1.05rem' }}>Browse and book with our trusted medical facilities.</p>
                         </div>
                     </div>
@@ -213,17 +239,125 @@ const UserDashboard = () => {
                         </div>
 
                         <form onSubmit={handleBook}>
-                            <div style={{ marginBottom: '2rem' }}>
-                                <label style={{ display: 'block', marginBottom: '0.75rem', fontWeight: 500, color: 'var(--text-muted)' }}>Select Date</label>
-                                <input
-                                    type="date"
-                                    className="input"
-                                    value={bookingDate}
-                                    onChange={(e) => setBookingDate(e.target.value)}
-                                    required
-                                    min={new Date().toISOString().split('T')[0]}
-                                    style={{ padding: '1rem' }}
-                                />
+                            <div style={{ marginBottom: '1.5rem', maxHeight: '45vh', overflowY: 'auto', paddingRight: '0.5rem' }} className="custom-scrollbar">
+                                {/* Date Selector */}
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                        <button type="button" style={{ background: 'none', color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.25rem', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.1)' }}><ChevronLeft size={16} /></button>
+                                        <span style={{ fontWeight: 600, fontSize: '0.95rem' }}>March 2026</span>
+                                        <button type="button" style={{ background: 'none', color: 'var(--text)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.25rem', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.1)' }}><ChevronRight size={16} /></button>
+                                    </div>
+                                </div>
+
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem', overflowX: 'auto', paddingBottom: '0.5rem', justifyContent: 'center' }}>
+                                    <button type="button" style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', flexShrink: 0 }}><ChevronLeft size={20} /></button>
+                                    {DATES.map((d, i) => (
+                                        <button
+                                            type="button"
+                                            key={i}
+                                            style={{
+                                                flexShrink: 0,
+                                                padding: '0.5rem 1rem',
+                                                borderRadius: '6px',
+                                                border: `1px solid ${selectedDate === d.date ? '#f87171' : 'rgba(255,255,255,0.1)'}`,
+                                                backgroundColor: selectedDate === d.date ? '#fecaca' : 'transparent',
+                                                color: selectedDate === d.date ? '#991b1b' : 'var(--text-muted)',
+                                                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem',
+                                                cursor: 'pointer', transition: 'all 0.2s',
+                                                minWidth: '60px'
+                                            }}
+                                            onClick={() => setSelectedDate(d.date)}
+                                        >
+                                            <span style={{ fontSize: '0.8rem', fontWeight: 600 }}>{d.day}</span>
+                                            <span style={{ fontSize: '0.85rem' }}>{d.date}</span>
+                                        </button>
+                                    ))}
+                                    <button type="button" style={{ background: 'none', border: 'none', color: 'var(--text)', cursor: 'pointer', flexShrink: 0 }}><ChevronRight size={20} /></button>
+                                </div>
+
+                                {/* Time Slots grids */}
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                    {/* Morning */}
+                                    <div style={{ border: '1px solid rgba(255,255,255,0.05)', borderRadius: '8px', padding: '1rem', backgroundColor: 'rgba(30,41,59,0.3)' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600 }}><Sun size={18} /> Morning</div>
+                                            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', background: 'rgba(255,255,255,0.05)', padding: '0.25rem 0.6rem', borderRadius: '12px' }}>{SLOTS.morning.length} Slots</span>
+                                        </div>
+                                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem' }}>
+                                            {SLOTS.morning.map((time, i) => (
+                                                <button
+                                                    type="button"
+                                                    key={i}
+                                                    disabled={disabledSlots.includes(time)}
+                                                    style={{
+                                                        padding: '0.5rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 600, cursor: disabledSlots.includes(time) ? 'not-allowed' : 'pointer',
+                                                        border: `1px solid ${selectedSlot === time ? '#fc8181' : disabledSlots.includes(time) ? 'transparent' : 'rgba(255,255,255,0.1)'}`,
+                                                        backgroundColor: disabledSlots.includes(time) ? 'rgba(0,0,0,0.1)' : selectedSlot === time ? '#fee2e2' : 'transparent',
+                                                        color: disabledSlots.includes(time) ? 'rgba(255,255,255,0.15)' : selectedSlot === time ? '#991b1b' : 'var(--text)',
+                                                        transition: 'all 0.2s',
+                                                    }}
+                                                    onClick={() => setSelectedSlot(time)}
+                                                >
+                                                    {time}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Afternoon */}
+                                    <div style={{ border: '1px solid rgba(255,255,255,0.05)', borderRadius: '8px', padding: '1rem', backgroundColor: 'rgba(30,41,59,0.3)' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600 }}><Sunset size={18} /> Afternoon</div>
+                                            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', background: 'rgba(255,255,255,0.05)', padding: '0.25rem 0.6rem', borderRadius: '12px' }}>{SLOTS.afternoon.length} Slots</span>
+                                        </div>
+                                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem' }}>
+                                            {SLOTS.afternoon.map((time, i) => (
+                                                <button
+                                                    type="button"
+                                                    key={i}
+                                                    disabled={disabledSlots.includes(time)}
+                                                    style={{
+                                                        padding: '0.5rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 600, cursor: disabledSlots.includes(time) ? 'not-allowed' : 'pointer',
+                                                        border: `1px solid ${selectedSlot === time ? '#fc8181' : disabledSlots.includes(time) ? 'transparent' : 'rgba(255,255,255,0.1)'}`,
+                                                        backgroundColor: disabledSlots.includes(time) ? 'rgba(0,0,0,0.1)' : selectedSlot === time ? '#fee2e2' : 'transparent',
+                                                        color: disabledSlots.includes(time) ? 'rgba(255,255,255,0.15)' : selectedSlot === time ? '#991b1b' : 'var(--text)',
+                                                        transition: 'all 0.2s',
+                                                    }}
+                                                    onClick={() => setSelectedSlot(time)}
+                                                >
+                                                    {time}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Evening */}
+                                    <div style={{ border: '1px solid rgba(255,255,255,0.05)', borderRadius: '8px', padding: '1rem', backgroundColor: 'rgba(30,41,59,0.3)' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600 }}><Moon size={18} /> Evening</div>
+                                            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', background: 'rgba(255,255,255,0.05)', padding: '0.25rem 0.6rem', borderRadius: '12px' }}>{SLOTS.evening.length} Slots</span>
+                                        </div>
+                                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem' }}>
+                                            {SLOTS.evening.map((time, i) => (
+                                                <button
+                                                    type="button"
+                                                    key={i}
+                                                    disabled={disabledSlots.includes(time)}
+                                                    style={{
+                                                        padding: '0.5rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 600, cursor: disabledSlots.includes(time) ? 'not-allowed' : 'pointer',
+                                                        border: `1px solid ${selectedSlot === time ? '#fc8181' : disabledSlots.includes(time) ? 'transparent' : 'rgba(255,255,255,0.1)'}`,
+                                                        backgroundColor: disabledSlots.includes(time) ? 'rgba(0,0,0,0.1)' : selectedSlot === time ? '#fee2e2' : 'transparent',
+                                                        color: disabledSlots.includes(time) ? 'rgba(255,255,255,0.15)' : selectedSlot === time ? '#991b1b' : 'var(--text)',
+                                                        transition: 'all 0.2s',
+                                                    }}
+                                                    onClick={() => setSelectedSlot(time)}
+                                                >
+                                                    {time}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <div style={{ display: 'flex', gap: '1rem' }}>

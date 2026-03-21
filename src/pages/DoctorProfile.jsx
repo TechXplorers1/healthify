@@ -1,13 +1,25 @@
-import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { DOCTORS } from '../data/mockData';
 import { Calendar, IndianRupee, Share2, Building2, PhoneCall, Video, User, Star, ChevronLeft, ChevronRight, Sun, Sunset, Moon } from 'lucide-react';
 
 const DoctorProfile = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const doctor = DOCTORS.find(d => d.id === parseInt(id));
+
+    const queryParams = new URLSearchParams(location.search);
+    const initialView = queryParams.get('view') === 'booking' ? 'booking' : 'profile';
+    const [activeView, setActiveView] = useState(initialView);
+
+    useEffect(() => {
+        const view = queryParams.get('view');
+        if (view === 'booking' || view === 'profile') {
+            setActiveView(view);
+        }
+    }, [location.search]);
 
     const [visitType, setVisitType] = useState('hospital');
     const [selectedLocation, setSelectedLocation] = useState(doctor?.locations[0] || '');
@@ -108,11 +120,28 @@ const DoctorProfile = () => {
                 </div>
             </div>
 
+            {/* Tabs */}
+            <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem', justifyContent: 'center' }}>
+                <button 
+                    style={{ background: 'transparent', border: 'none', padding: '0.5rem 1.5rem', fontSize: '1.1rem', fontWeight: 600, color: activeView === 'profile' ? 'var(--text)' : 'var(--text-muted)', borderBottom: activeView === 'profile' ? '3px solid var(--primary)' : '3px solid transparent', cursor: 'pointer', transition: 'all 0.2s' }}
+                    onClick={() => { setActiveView('profile'); navigate(`/user/doctor/${doctor.id}?view=profile`, { replace: true }); }}
+                >
+                    Profile Details
+                </button>
+                <button 
+                    style={{ background: 'transparent', border: 'none', padding: '0.5rem 1.5rem', fontSize: '1.1rem', fontWeight: 600, color: activeView === 'booking' ? 'var(--text)' : 'var(--text-muted)', borderBottom: activeView === 'booking' ? '3px solid var(--primary)' : '3px solid transparent', cursor: 'pointer', transition: 'all 0.2s' }}
+                    onClick={() => { setActiveView('booking'); navigate(`/user/doctor/${doctor.id}?view=booking`, { replace: true }); }}
+                >
+                    Book Appointment
+                </button>
+            </div>
+
             {/* Content Layout */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 1fr) minmax(350px, 1.25fr)', gap: '2rem', alignItems: 'start' }}>
+            <div>
 
                 {/* Left Column: Details */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                {activeView === 'profile' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', maxWidth: '800px', margin: '0 auto' }}>
                     <div className="card animate-slide-up delay-100" style={{ padding: '2rem' }}>
                         <h2 style={{ fontSize: '1.25rem', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.75rem' }}>
                             <User size={20} color="var(--text-muted)" /> About
@@ -148,10 +177,12 @@ const DoctorProfile = () => {
                         </ul>
                     </div>
                 </div>
+                )}
 
                 {/* Right Column: Booking */}
-                <div style={{ position: 'sticky', top: '100px' }}>
-                    <div className="card animate-slide-up delay-400" style={{ padding: 0, border: '1px solid rgba(255,255,255,0.05)', background: 'var(--surface-light)' }}>
+                {activeView === 'booking' && (
+                <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+                    <div className="card animate-slide-up delay-100" style={{ padding: 0, border: '1px solid rgba(255,255,255,0.05)', background: 'var(--surface-light)' }}>
 
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                             <h2 style={{ fontSize: '1.35rem', color: 'var(--text)', fontWeight: 600 }}>Schedule Appointment</h2>
@@ -187,9 +218,9 @@ const DoctorProfile = () => {
                             {/* Date Selector */}
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                                    <button style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.25rem', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.1)' }}><ChevronLeft size={16} /></button>
+                                    <button style={{ background: 'none', color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.25rem', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.1)' }}><ChevronLeft size={16} /></button>
                                     <span style={{ fontWeight: 600, fontSize: '0.95rem' }}>March 2026</span>
-                                    <button style={{ background: 'none', border: 'none', color: 'var(--text)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.25rem', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.1)' }}><ChevronRight size={16} /></button>
+                                    <button style={{ background: 'none', color: 'var(--text)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.25rem', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.1)' }}><ChevronRight size={16} /></button>
                                 </div>
                             </div>
 
@@ -320,6 +351,7 @@ const DoctorProfile = () => {
                         </div>
                     </div>
                 </div>
+                )}
 
             </div>
         </div>

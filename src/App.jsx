@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import BackButton from './components/BackButton';
+import ScrollToTop from './components/ScrollToTop';
 import Landing from './pages/Landing';
 import Auth from './pages/Auth';
 import UserDashboard from './pages/UserDashboard';
@@ -26,8 +28,10 @@ const App = () => {
 
   return (
     <Router>
+      <ScrollToTop />
       <div className="app-container" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
         <Navbar auth={auth} setAuth={setAuth} />
+        <BackButton />
         <main style={{ flex: 1 }}>
           <Routes>
             <Route path="/" element={<Landing auth={auth} />} />

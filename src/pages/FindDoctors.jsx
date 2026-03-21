@@ -84,10 +84,10 @@ const FindDoctors = () => {
                         </div>
 
                         <div style={{ display: 'flex', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-                            <button className="btn" style={{ flex: 1, borderRadius: 0, backgroundColor: 'transparent', color: 'var(--text)', padding: '1.25rem', fontSize: '0.95rem', fontWeight: 600, borderRight: '1px solid rgba(255,255,255,0.05)', transition: 'background-color 0.2s' }} onMouseEnter={(e) => e.target.style.backgroundColor = 'rgba(255,255,255,0.02)'} onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'} onClick={() => navigate(`/user/doctor/${doctor.id}`)}>
+                            <button className="btn" style={{ flex: 1, borderRadius: 0, backgroundColor: 'transparent', color: 'var(--text)', padding: '1.25rem', fontSize: '0.95rem', fontWeight: 600, borderRight: '1px solid rgba(255,255,255,0.05)', transition: 'background-color 0.2s' }} onMouseEnter={(e) => e.target.style.backgroundColor = 'rgba(255,255,255,0.02)'} onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'} onClick={() => navigate(`/user/doctor/${doctor.id}?view=profile`)}>
                                 View Full Profile
                             </button>
-                            <button className="btn" style={{ flex: 1, borderRadius: 0, backgroundColor: 'rgba(245, 158, 11, 0.1)', color: '#fbbf24', padding: '1.25rem', fontSize: '0.95rem', fontWeight: 600, transition: 'all 0.2s' }} onMouseEnter={(e) => { e.target.style.backgroundColor = 'rgba(245, 158, 11, 0.2)'; e.target.style.color = '#fcd34d'; }} onMouseLeave={(e) => { e.target.style.backgroundColor = 'rgba(245, 158, 11, 0.1)'; e.target.style.color = '#fbbf24'; }} onClick={() => navigate(`/user/doctor/${doctor.id}`)}>
+                            <button className="btn" style={{ flex: 1, borderRadius: 0, backgroundColor: 'rgba(245, 158, 11, 0.1)', color: '#fbbf24', padding: '1.25rem', fontSize: '0.95rem', fontWeight: 600, transition: 'all 0.2s' }} onMouseEnter={(e) => { e.target.style.backgroundColor = 'rgba(245, 158, 11, 0.2)'; e.target.style.color = '#fcd34d'; }} onMouseLeave={(e) => { e.target.style.backgroundColor = 'rgba(245, 158, 11, 0.1)'; e.target.style.color = '#fbbf24'; }} onClick={() => navigate(`/user/doctor/${doctor.id}?view=booking`)}>
                                 Book An Appointment
                             </button>
                         </div>
