@@ -8,7 +8,8 @@ export const CLINICS = [
         tokenPrice: 50,
         rating: 4.8,
         image: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-        doctorName: 'Dr. Sarah Jenkins'
+        doctorName: 'Dr. Sarah Jenkins',
+        specialties: ['General Medicine', 'Internal Medicine', 'Cardiology', 'Heart']
     },
     {
         id: 2,
@@ -19,7 +20,8 @@ export const CLINICS = [
         tokenPrice: 30,
         rating: 4.5,
         image: 'https://images.unsplash.com/photo-1606811841689-23dfddce3e95?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-        doctorName: 'Dr. Michael Chen'
+        doctorName: 'Dr. Michael Chen',
+        specialties: ['Dentistry', 'Orthodontics', 'Teeth']
     },
     {
         id: 3,
@@ -30,7 +32,8 @@ export const CLINICS = [
         tokenPrice: 40,
         rating: 4.9,
         image: 'https://images.unsplash.com/photo-1581594693702-fbdc51b2763b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-        doctorName: 'Dr. Emily Roberts'
+        doctorName: 'Dr. Emily Roberts',
+        specialties: ['General Medicine', 'Family Medicine', 'Pediatrics']
     },
     {
         id: 4,
@@ -41,7 +44,8 @@ export const CLINICS = [
         tokenPrice: 1500,
         rating: 4.9,
         image: 'https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-        doctorName: 'Dr. (Col) Manjinder Sandhu'
+        doctorName: 'Dr. (Col) Manjinder Sandhu',
+        specialties: ['Cardiac Sciences', 'Oncology', 'Gastroenterology', 'Neurology', 'Orthopaedics', 'Heart', 'Cancer', 'Brain', 'Stomach']
     },
     {
         id: 5,
@@ -52,7 +56,8 @@ export const CLINICS = [
         tokenPrice: 1200,
         rating: 4.7,
         image: 'https://images.unsplash.com/photo-1519494080410-f9aa76cb4283?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-        doctorName: 'Dr. Ajay Agarwal'
+        doctorName: 'Dr. Ajay Agarwal',
+        specialties: ['Cardiac Sciences', 'Internal Medicine', 'General Surgery', 'Heart', 'Lungs']
     },
     {
         id: 6,
@@ -63,7 +68,8 @@ export const CLINICS = [
         tokenPrice: 1800,
         rating: 4.8,
         image: 'https://images.unsplash.com/photo-1538108149393-fbbd81895907?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-        doctorName: 'Dr. Anoop Misra'
+        doctorName: 'Dr. Anoop Misra',
+        specialties: ['Diabetology', 'Endocrinology', 'Diabetes', 'Hormones', 'Metabolic']
     }
 ];
 

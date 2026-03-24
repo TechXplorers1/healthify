@@ -13,6 +13,7 @@ import Careers from './pages/Careers';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import FindDoctors from './pages/FindDoctors';
+import FindHospitals from './pages/FindHospitals';
 import DoctorProfile from './pages/DoctorProfile';
 import HealthCheckups from './pages/HealthCheckups';
 
@@ -47,6 +48,10 @@ const App = () => {
             <Route
               path="/user/doctors"
               element={<ProtectedRoute isAllowed={auth.isAuthenticated && auth.role === 'user'}><FindDoctors /></ProtectedRoute>}
+            />
+            <Route
+              path="/user/hospitals"
+              element={<ProtectedRoute isAllowed={auth.isAuthenticated && auth.role === 'user'}><FindHospitals /></ProtectedRoute>}
             />
             <Route
               path="/user/doctor/:id"

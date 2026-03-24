@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Search } from 'lucide-react';
 
 const HealthCheckups = () => {
+    const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedHospital, setSelectedHospital] = useState('');
 
@@ -27,6 +29,24 @@ const HealthCheckups = () => {
     const filteredCategories = CATEGORIES.filter(cat =>
         cat.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
+    const categoryToSpecialty = {
+        'Cancer Screening': 'Cancer',
+        'Heart': 'Heart',
+        'Diabetes': 'Diabetes & Hormones',
+        'General Health': 'General Medicine',
+        'Women': 'General Medicine', 
+        'Senior Citizen': 'General Medicine',
+    };
+
+    const handleCategoryClick = (catName) => {
+        const specialty = categoryToSpecialty[catName];
+        if (specialty) {
+            navigate(`/user/hospitals?specialty=${encodeURIComponent(specialty)}`);
+        } else {
+            navigate(`/user/hospitals`);
+        }
+    };
 
     return (
         <div className="container" style={{ padding: '6rem 1rem 3rem 1rem', minHeight: '100vh', position: 'relative' }}>
@@ -78,6 +98,7 @@ const HealthCheckups = () => {
                     {filteredCategories.map((cat, index) => (
                         <div
                             key={index}
+                            onClick={() => handleCategoryClick(cat.name)}
                             style={{
                                 backgroundColor: 'var(--surface-light)',
                                 borderRadius: 'var(--radius-lg)',

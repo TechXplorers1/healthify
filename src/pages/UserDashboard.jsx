@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CLINICS, PATIENT_STORIES } from '../data/mockData';
-import { MapPin, Phone, DollarSign, Star, Calendar, Search, Building2, Stethoscope, HeartPulse, ArrowRight, Quote, ChevronLeft, ChevronRight, Sun, Sunset, Moon } from 'lucide-react';
+import { MapPin, Phone, DollarSign, Star, Calendar, Search, Building2, Stethoscope, HeartPulse, ArrowRight, Quote, ChevronLeft, ChevronRight, Sun, Sunset, Moon, Filter } from 'lucide-react';
 
 const UserDashboard = () => {
     const navigate = useNavigate();
@@ -9,6 +9,24 @@ const UserDashboard = () => {
     const [selectedDate, setSelectedDate] = useState('09 Mar');
     const [selectedSlot, setSelectedSlot] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
+    const [selectedBodyPart, setSelectedBodyPart] = useState('All');
+    const [showFilterPopup, setShowFilterPopup] = useState(false);
+
+    const BODY_PART_FILTERS = [
+        { label: 'All', keywords: [] },
+        { label: 'Brain & Nerves', keywords: ['neuro', 'brain', 'nerve'] },
+        { label: 'Eyes', keywords: ['ophthalmolog', 'eye', 'vision'] },
+        { label: 'Ears, Nose & Throat', keywords: ['ent', 'otolaryngolog', 'ear', 'nose', 'throat'] },
+        { label: 'Teeth & Mouth', keywords: ['dent', 'teeth', 'mouth', 'orthodont'] },
+        { label: 'Heart', keywords: ['cardiac', 'cardiology', 'ctvs', 'heart'] },
+        { label: 'Lungs', keywords: ['pulmono', 'chest', 'lung', 'respirat'] },
+        { label: 'Stomach & Digestion', keywords: ['gastro', 'liver', 'hepatobiliary', 'stomach', 'digestion'] },
+        { label: 'Urinary & Kidneys', keywords: ['urolo', 'nephro', 'kidney', 'urina'] },
+        { label: 'Hair & Skin', keywords: ['derma', 'skin', 'hair', 'tricholog'] },
+        { label: 'Diabetes & Hormones', keywords: ['diabet', 'endocrin', 'hormone'] },
+        { label: 'Cancer', keywords: ['oncol', 'cancer', 'tumor'] },
+        { label: 'General Medicine', keywords: ['general', 'internal', 'physician'] },
+    ];
 
     // Reset slot when clinic or date changes
     React.useEffect(() => {
@@ -44,11 +62,22 @@ const UserDashboard = () => {
         setSelectedSlot(null);
     };
 
-    const filteredClinics = CLINICS.filter(clinic =>
-        clinic.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        clinic.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        clinic.type.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredClinics = CLINICS.filter(clinic => {
+        const matchesSearch = clinic.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            clinic.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            clinic.type.toLowerCase().includes(searchQuery.toLowerCase());
+
+        if (!matchesSearch) return false;
+
+        if (selectedBodyPart === 'All') return true;
+
+        const activeFilter = BODY_PART_FILTERS.find(f => f.label === selectedBodyPart);
+        if (!activeFilter) return true;
+
+        const clinicKeywords = [clinic.name, ...(clinic.specialties || []), clinic.type].join(' ').toLowerCase();
+        
+        return activeFilter.keywords.some(kw => clinicKeywords.includes(kw));
+    });
 
     const scrollToClinics = () => {
         document.getElementById('clinics-section').scrollIntoView({ behavior: 'smooth' });
@@ -80,7 +109,7 @@ const UserDashboard = () => {
                     </div>
 
                     {/* Action 2 */}
-                    <div className="card animate-slide-up delay-300" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', height: '100%', cursor: 'pointer', transition: 'all 0.3s ease', border: '1px solid rgba(16, 185, 129, 0.2)', background: 'linear-gradient(to bottom right, rgba(30,41,59,0.9), rgba(15,23,42,0.95))' }} onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-5px)'; e.currentTarget.style.boxShadow = '0 15px 30px rgba(16,185,129,0.15)'; e.currentTarget.style.borderColor = 'rgba(16,185,129,0.5)'; }} onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'var(--shadow-lg)'; e.currentTarget.style.borderColor = 'rgba(16, 185, 129, 0.2)'; }} onClick={scrollToClinics}>
+                    <div className="card animate-slide-up delay-300" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', height: '100%', cursor: 'pointer', transition: 'all 0.3s ease', border: '1px solid rgba(16, 185, 129, 0.2)', background: 'linear-gradient(to bottom right, rgba(30,41,59,0.9), rgba(15,23,42,0.95))' }} onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-5px)'; e.currentTarget.style.boxShadow = '0 15px 30px rgba(16,185,129,0.15)'; e.currentTarget.style.borderColor = 'rgba(16,185,129,0.5)'; }} onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'var(--shadow-lg)'; e.currentTarget.style.borderColor = 'rgba(16, 185, 129, 0.2)'; }} onClick={() => navigate('/user/hospitals')}>
                         <div style={{ background: 'rgba(16, 185, 129, 0.1)', width: '60px', height: '60px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem' }}>
                             <Calendar size={32} color="var(--secondary)" />
                         </div>
@@ -117,18 +146,85 @@ const UserDashboard = () => {
                         </div>
                     </div>
 
-                    <div className="animate-slide-up delay-200" style={{ position: 'relative', width: '100%', maxWidth: '350px' }}>
-                        <Search size={20} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-                        <input
-                            type="text"
-                            className="input"
-                            placeholder="Search clinics or locations..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            style={{ paddingLeft: '48px', paddingRight: '16px', paddingTop: '1rem', paddingBottom: '1rem', fontSize: '1.05rem', backgroundColor: 'rgba(30, 41, 59, 0.7)', borderRadius: '1rem' }}
-                        />
+                    <div className="animate-slide-up delay-200" style={{ display: 'flex', gap: '1rem', width: '100%', maxWidth: '450px' }}>
+                        <div style={{ position: 'relative', flex: 1 }}>
+                            <Search size={20} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                            <input
+                                type="text"
+                                className="input"
+                                placeholder="Search clinics or locations..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                style={{ paddingLeft: '48px', paddingRight: '16px', paddingTop: '1rem', paddingBottom: '1rem', fontSize: '1.05rem', backgroundColor: 'rgba(30, 41, 59, 0.7)', borderRadius: '1rem', width: '100%' }}
+                            />
+                        </div>
+                        <button 
+                            className="btn btn-outline" 
+                            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0 1.25rem', borderRadius: '1rem', backgroundColor: selectedBodyPart !== 'All' ? 'rgba(59, 130, 246, 0.1)' : 'transparent', border: `1px solid ${selectedBodyPart !== 'All' ? 'var(--primary)' : 'rgba(255,255,255,0.1)'}`, color: selectedBodyPart !== 'All' ? 'var(--primary)' : 'var(--text)' }}
+                            onClick={() => setShowFilterPopup(true)}
+                        >
+                            <Filter size={20} />
+                            Filter
+                        </button>
                     </div>
                 </div>
+
+                {/* Filter Popup Modal */}
+                {showFilterPopup && (
+                    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100, padding: '1rem' }}>
+                        <div className="card animate-scale-up" style={{ width: '100%', maxWidth: '600px', padding: '2rem', border: '1px solid rgba(255,255,255,0.1)' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', paddingBottom: '1rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                                <h2 style={{ fontSize: '1.5rem', fontWeight: 700, margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text)' }}>
+                                    <Filter size={24} color="var(--primary)" /> Filter by Body Part
+                                </h2>
+                                <button style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '2rem', lineHeight: 1 }} onClick={() => setShowFilterPopup(false)}>&times;</button>
+                            </div>
+                            
+                            <div className="custom-scrollbar" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '0.75rem', maxHeight: '55vh', overflowY: 'auto', paddingRight: '0.5rem' }}>
+                                {BODY_PART_FILTERS.map((filter, index) => (
+                                    <button
+                                        key={index}
+                                        onClick={() => {
+                                            setSelectedBodyPart(filter.label);
+                                            setShowFilterPopup(false);
+                                        }}
+                                        style={{
+                                            padding: '1rem 0.5rem',
+                                            borderRadius: '12px',
+                                            border: `1px solid ${selectedBodyPart === filter.label ? 'var(--primary)' : 'rgba(255,255,255,0.05)'}`,
+                                            backgroundColor: selectedBodyPart === filter.label ? 'rgba(59, 130, 246, 0.1)' : 'rgba(30,41,59,0.5)',
+                                            color: selectedBodyPart === filter.label ? 'var(--primary)' : 'var(--text)',
+                                            fontWeight: 600,
+                                            fontSize: '0.9rem',
+                                            cursor: 'pointer',
+                                            textAlign: 'center',
+                                            transition: 'all 0.2s',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            gap: '0.5rem',
+                                            minHeight: '80px'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            if (selectedBodyPart !== filter.label) {
+                                                e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)';
+                                            }
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            if (selectedBodyPart !== filter.label) {
+                                                e.currentTarget.style.backgroundColor = 'rgba(30,41,59,0.5)';
+                                            }
+                                        }}
+                                    >
+                                        {filter.label}
+                                        {selectedBodyPart === filter.label && <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--primary)' }}></div>}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                )}
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '2rem' }}>
                     {filteredClinics.length > 0 ? filteredClinics.map((clinic, index) => (
